@@ -31,13 +31,14 @@ import com.vedic.stopewatch.domain.TimerUseCaseImpl
 import com.vedic.stopewatch.ui.theme.StopeWatchTheme
 import com.vedic.stopewatch.ui.viewModel.TimerViewModel
 import com.vedic.stopewatch.ui.viewModel.TimerViewModelFactory
+import com.vedic.stopewatch.util.DispatcherProviderImpl
 import com.vedic.stopewatch.util.TimerClickEvents
 
 class MainActivity : ComponentActivity() {
     private lateinit var timerViewModel: TimerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val timerViewModelFactory = TimerViewModelFactory(TimerUseCaseImpl(TimerRepoImpl()))
+        val timerViewModelFactory = TimerViewModelFactory(TimerUseCaseImpl(TimerRepoImpl(DispatcherProviderImpl()), DispatcherProviderImpl()))
         timerViewModel = ViewModelProvider(this, timerViewModelFactory)[TimerViewModel::class.java]
         enableEdgeToEdge()
         setContent {
@@ -63,15 +64,18 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val time by timerViewModel.currentTime.collectAsState()
+                val uiState by timerViewModel.currentUiState.collectAsState()
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) {
                     Log.d("Abhishek", "recomposition")
-                    Greeting(
+                   /* Greeting(
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
-                    )
+                    )*/
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -84,52 +88,53 @@ class MainActivity : ComponentActivity() {
 
                         Row(modifier = Modifier.padding(8.dp)) {
                             Button(modifier = Modifier.padding(8.dp),
-                                enabled = isStartEnable.value,
+                                enabled = uiState.isStartEnable,
                                 onClick = {
-                                    if (isStarted.value) {
-                                        isStarted.value = false
+                                   /* if (timerViewModel.currentUiState.value.isStarted) {
+                                    *//*    isStarted.value = false
                                         isPaused.value = true
-                                        isPauseEnable.value = false
+                                        isPauseEnable.value = false*//*
                                         timerViewModel.triggerClickEvents(TimerClickEvents.Stop)
                                     } else {
-                                        isResetEnable.value = true
+                             *//*           isResetEnable.value = true
                                         isPauseEnable.value = true
                                         isStarted.value = true
-                                        isPaused.value = false
+                                        isPaused.value = false*//*
                                         timerViewModel.triggerClickEvents(TimerClickEvents.Start)
-                                    }
+                                    }*/
+                                    timerViewModel.triggerClickEvents(if (uiState.isStarted) TimerClickEvents.Stop else TimerClickEvents.Start)
                                 }) {
 
-                                Text(text = if (isStarted.value) "Stop" else "Start")
+                                Text(text = if (uiState.isStarted) "Stop" else "Start")
                             }
 
                             Button(modifier = Modifier.padding(8.dp),
-                                enabled = isPauseEnable.value,
+                                enabled = timerViewModel.currentUiState.collectAsState().value.isPauseEnable,
                                 onClick = {
-                                    if (isPaused.value) {
-                                        isPaused.value = false
+                                    if (timerViewModel.currentUiState.value.isPaused) {
+                                        /*isPaused.value = false
                                         isStarted.value = true
-                                        isStartEnable.value = true
+                                        isStartEnable.value = true*/
                                         timerViewModel.triggerClickEvents(TimerClickEvents.Resume)
                                     } else {
-                                        isPaused.value = true
+                                   /*     isPaused.value = true
                                         isStarted.value = false
-                                        isStartEnable.value = false
+                                        isStartEnable.value = false*/
                                         timerViewModel.triggerClickEvents(TimerClickEvents.Pause)
                                     }
                                 }) {
-                                Text(text = if (isPaused.value) "Resume" else "Pause")
+                                Text(text = if (timerViewModel.currentUiState.collectAsState().value.isPaused) "Resume" else "Pause")
                             }
                         }
 
                         Button(modifier = Modifier.padding(8.dp),
-                            enabled = isResetEnable.value,
+                            enabled = timerViewModel.currentUiState.collectAsState().value.isResetEnable,
                             onClick = {
                                 timerViewModel.triggerClickEvents(TimerClickEvents.Reset)
-                                isPaused.value = false
+                              /*  isPaused.value = false
                                 isStarted.value = false
                                 isPauseEnable.value = false
-                                isStartEnable.value = true
+                                isStartEnable.value = true*/
                             }) {
                             Text(text = "Reset")
                         }

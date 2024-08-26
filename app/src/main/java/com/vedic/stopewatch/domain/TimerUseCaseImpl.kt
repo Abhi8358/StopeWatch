@@ -1,10 +1,13 @@
 package com.vedic.stopewatch.domain
 
 import com.vedic.stopewatch.data.model.TimerViewData
+import com.vedic.stopewatch.util.DispatcherProvider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
-class TimerUseCaseImpl(private val repo: TimerRepo) : TimerUseCase {
+class TimerUseCaseImpl(private val repo: TimerRepo, private val dispatcherProvider: DispatcherProvider) : TimerUseCase {
 
     override suspend fun pause() {
         repo.pause()
@@ -21,7 +24,7 @@ class TimerUseCaseImpl(private val repo: TimerRepo) : TimerUseCase {
             val minutes = (elapseTime / (1000 * 60)) % 60
             val hours = (elapseTime / (1000 * 60 * 60))
             TimerViewData(hours = hours, milliSecond = milliSeconds, minute = minutes, second = seconds)
-        }
+        }.flowOn(dispatcherProvider.io)
     }
 
     override suspend fun reset() {
