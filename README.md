@@ -1,1 +1,1 @@
-Simple Stope watch implementation with coroutine and flow.
+Simple StopWatch implementation with coroutine and flow.
