@@ -6,14 +6,17 @@ import androidx.lifecycle.viewModelScope
 import com.vedic.stopewatch.data.model.StopWatchUiState
 import com.vedic.stopewatch.domain.TimerUseCase
 import com.vedic.stopewatch.util.TimerClickEvents
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.concurrent.CancellationException
+import javax.inject.Inject
 
-class TimerViewModel(val timerUseCase: TimerUseCase) : ViewModel() {
+@HiltViewModel
+class TimerViewModel @Inject constructor(val timerUseCase: TimerUseCase) : ViewModel() {
 
     private val _currentTime = MutableStateFlow("00:00:00:000")
     val currentTime = _currentTime.asStateFlow()
@@ -91,7 +94,7 @@ class TimerViewModel(val timerUseCase: TimerUseCase) : ViewModel() {
 
     private fun stopTrigger() {
         _currentUiState.value = _currentUiState.value.copy(
-            isStartEnable = true,
+            isStartEnable = false,
             isPauseEnable = false,
             isStarted = false,
             isPaused = false

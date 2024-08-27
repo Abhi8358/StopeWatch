@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,26 +22,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import com.vedic.stopewatch.data.TimerRepoImpl
-import com.vedic.stopewatch.domain.TimerUseCaseImpl
 import com.vedic.stopewatch.ui.theme.StopeWatchTheme
 import com.vedic.stopewatch.ui.viewModel.TimerViewModel
-import com.vedic.stopewatch.ui.viewModel.TimerViewModelFactory
-import com.vedic.stopewatch.util.DispatcherProviderImpl
 import com.vedic.stopewatch.util.TimerClickEvents
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var timerViewModel: TimerViewModel
+    private val timerViewModel: TimerViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val timerViewModelFactory = TimerViewModelFactory(
-            TimerUseCaseImpl(
-                TimerRepoImpl(DispatcherProviderImpl()),
-                DispatcherProviderImpl()
-            )
-        )
-        timerViewModel = ViewModelProvider(this, timerViewModelFactory)[TimerViewModel::class.java]
         enableEdgeToEdge()
         setContent {
             StopeWatchTheme {

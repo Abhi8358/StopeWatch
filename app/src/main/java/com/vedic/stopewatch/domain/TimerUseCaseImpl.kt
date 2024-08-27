@@ -6,8 +6,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class TimerUseCaseImpl(private val repo: TimerRepo, private val dispatcherProvider: DispatcherProvider) : TimerUseCase {
+class TimerUseCaseImpl @Inject constructor(private val repo: TimerRepo, private val dispatcherProvider: DispatcherProvider) : TimerUseCase {
 
     override suspend fun pause() {
         repo.pause()

@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.isActive
+import javax.inject.Inject
 
-class TimerRepoImpl(private val dispatcherProvider: DispatcherProvider) : TimerRepo {
+class TimerRepoImpl @Inject constructor(private val dispatcherProvider: DispatcherProvider) : TimerRepo {
 
     private var startTime = 0L
     private var elapseTime = 0L
