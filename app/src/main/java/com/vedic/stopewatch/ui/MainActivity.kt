@@ -13,15 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -38,40 +34,21 @@ class MainActivity : ComponentActivity() {
     private lateinit var timerViewModel: TimerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val timerViewModelFactory = TimerViewModelFactory(TimerUseCaseImpl(TimerRepoImpl(DispatcherProviderImpl()), DispatcherProviderImpl()))
+        val timerViewModelFactory = TimerViewModelFactory(
+            TimerUseCaseImpl(
+                TimerRepoImpl(DispatcherProviderImpl()),
+                DispatcherProviderImpl()
+            )
+        )
         timerViewModel = ViewModelProvider(this, timerViewModelFactory)[TimerViewModel::class.java]
         enableEdgeToEdge()
         setContent {
             StopeWatchTheme {
-                var isStarted = remember {
-                    mutableStateOf(false)
-                }
-
-                var isPaused = remember {
-                    mutableStateOf(true)
-                }
-
-                val isPauseEnable = remember {
-                    mutableStateOf(false)
-                }
-
-                val isStartEnable = remember {
-                    mutableStateOf(true)
-                }
-
-                val isResetEnable = remember {
-                    mutableStateOf(false)
-                }
-
                 val time by timerViewModel.currentTime.collectAsState()
                 val uiState by timerViewModel.currentUiState.collectAsState()
 
                 Scaffold(modifier = Modifier.fillMaxSize()) {
                     Log.d("Abhishek", "recomposition")
-                   /* Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )*/
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -90,18 +67,6 @@ class MainActivity : ComponentActivity() {
                             Button(modifier = Modifier.padding(8.dp),
                                 enabled = uiState.isStartEnable,
                                 onClick = {
-                                   /* if (timerViewModel.currentUiState.value.isStarted) {
-                                    *//*    isStarted.value = false
-                                        isPaused.value = true
-                                        isPauseEnable.value = false*//*
-                                        timerViewModel.triggerClickEvents(TimerClickEvents.Stop)
-                                    } else {
-                             *//*           isResetEnable.value = true
-                                        isPauseEnable.value = true
-                                        isStarted.value = true
-                                        isPaused.value = false*//*
-                                        timerViewModel.triggerClickEvents(TimerClickEvents.Start)
-                                    }*/
                                     timerViewModel.triggerClickEvents(if (uiState.isStarted) TimerClickEvents.Stop else TimerClickEvents.Start)
                                 }) {
 
@@ -112,14 +77,8 @@ class MainActivity : ComponentActivity() {
                                 enabled = timerViewModel.currentUiState.collectAsState().value.isPauseEnable,
                                 onClick = {
                                     if (timerViewModel.currentUiState.value.isPaused) {
-                                        /*isPaused.value = false
-                                        isStarted.value = true
-                                        isStartEnable.value = true*/
                                         timerViewModel.triggerClickEvents(TimerClickEvents.Resume)
                                     } else {
-                                   /*     isPaused.value = true
-                                        isStarted.value = false
-                                        isStartEnable.value = false*/
                                         timerViewModel.triggerClickEvents(TimerClickEvents.Pause)
                                     }
                                 }) {
@@ -131,10 +90,6 @@ class MainActivity : ComponentActivity() {
                             enabled = timerViewModel.currentUiState.collectAsState().value.isResetEnable,
                             onClick = {
                                 timerViewModel.triggerClickEvents(TimerClickEvents.Reset)
-                              /*  isPaused.value = false
-                                isStarted.value = false
-                                isPauseEnable.value = false
-                                isStartEnable.value = true*/
                             }) {
                             Text(text = "Reset")
                         }
@@ -142,21 +97,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    StopeWatchTheme {
-        Greeting("Android")
     }
 }
