@@ -7,3 +7,4 @@ data class StopWatchUiState(
     val isPauseEnable: Boolean = false,
     val isResetEnable: Boolean = false
 )
+
